@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymSystem - Dashboard</title>
+    <!-- Fontes e Ícones -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Cores baseadas na imagem "Logistix" */
+            --sidebar-bg: #2b3648; /* Azul escuro acinzentado */
+            --sidebar-hover: #37465b;
+            --main-bg: #f3f4f7;     /* Cinza muito claro para o fundo */
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-gray: #8898aa;
+            
+            /* Cores dos Cards */
+            --card-blue: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --card-red: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            --card-purple: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            --card-green: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --card-orange: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+
+            /* Tabela e UI */
+            --primary-btn: #4facfe;
+            --border-color: #e9ecef;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--main-bg);
+            display: flex;
+            min-height: 100vh;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR (Lateral Esquerda) --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            transition: 0.3s;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            color: #4facfe;
+        }
+
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .user-profile {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            background: var(--card-purple);
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .user-name { font-weight: 600; margin-bottom: 5px; }
+        .user-role { font-size: 0.8rem; color: #8898aa; }
+
+        .nav-menu {
+            padding: 20px 0;
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item {
+            padding: 12px 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #ced4da;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--sidebar-hover);
+            color: white;
+            border-left: 4px solid #4facfe;
+        }
+
+        .nav-item i { width: 20px; text-align: center; }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            margin-left: 260px; /* Largura da sidebar */
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        header {
+            background: var(--white);
+            height: 70px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .header-title h2 { font-size: 1.2rem; font-weight: 600; color: var(--text-dark); }
+        .header-title span { color: var(--text-gray); font-size: 0.9rem; }
+
+        .header-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .search-box {
+            background: #f0f2f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-gray);
+        }
+        .search-box input { border: none; background: transparent; outline: none; }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* --- STATS CARDS (Coloridos) --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover { transform: translateY(-5px); }
+
+        .stat-card.blue { background: var(--card-blue); }
+        .stat-card.red { background: var(--card-red); }
+        .stat-card.purple { background: var(--card-purple); }
+        .stat-card.green { background: var(--card-green); }
+
+        .stat-info h3 { font-size: 2rem; font-weight: 700; margin-bottom: 5px; }
+        .stat-info p { font-size: 0.9rem; opacity: 0.9; }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.3;
+        }
+
+        /* --- SEÇÕES DE CONTEÚDO (Grid) --- */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        /* Card Branco Genérico */
+        .white-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .card-title { font-weight: 700; font-size: 1.1rem; color: #2c3e50; }
+
+        /* Formulário */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #64748b; font-weight: 500; }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: 0.3s;
+            background-color: #f8f9fa;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #4facfe;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--card-blue);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover { opacity: 0.9; transform: scale(1.02); }
+
+        .type-toggle {
+            display: flex;
+            background: #f1f3f5;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        .type-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .type-btn.active {
+            background: white;
+            color: #2c3e50;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* --- TABELA MODERNA --- */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            color: #8898aa;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        tr:hover { background-color: #f8f9fa; }
+
+        .user-cell { display: flex; align-items: center; gap: 10px; }
+        .user-avatar-small {
+            width: 35px; height: 35px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #555;
+            font-size: 0.8rem;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-aluno { background: rgba(56, 249, 215, 0.2); color: #00b894; }
+        .badge-instrutor { background: rgba(79, 172, 254, 0.2); color: #0984e3; }
+
+        .action-icon {
+            color: #8898aa;
+            margin-right: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .action-icon:hover { color: #4facfe; transform: scale(1.2); }
+
+        /* Logs Lateral */
+        .logs-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            font-size: 0.85rem;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            color: #555;
+            display: flex;
+            gap: 8px;
+        }
+        .log-entry.success { border-left: 3px solid #00b894; padding-left: 8px; }
+        .log-entry.error { border-left: 3px solid #ff7675; padding-left: 8px; }
+        .log-time { font-size: 0.7rem; color: #aaa; min-width: 50px; }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .content-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); width: 0; }
+            .main-content { margin-left: 0; }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-dumbbell logo-icon"></i>
+            <span class="logo-text">GymSystem</span>
+        </div>
+
+        <div class="user-profile">
+            <div class="avatar">A</div>
+            <div class="user-name">Admin Gym</div>
+            <div class="user-role">Gerente Geral</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item active"><i class="fas fa-chart-pie"></i> Dashboard</li>
+            <li class="nav-item"><i class="fas fa-users"></i> Membros</li>
+            <li class="nav-item"><i class="fas fa-user-tie"></i> Instrutores</li>
+            <li class="nav-item"><i class="fas fa-calendar-check"></i> Aulas</li>
+            <li class="nav-item"><i class="fas fa-wallet"></i> Financeiro</li>
+            <li class="nav-item"><i class="fas fa-cog"></i> Configurações</li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TOP HEADER -->
+        <header>
+            <div class="header-title">
+                <h2>Dashboard Academia</h2>
+                <span>Bem-vindo de volta, Admin</span>
+            </div>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Pesquisar...">
+                </div>
+                <i class="fas fa-bell" style="color:#8898aa; cursor:pointer;"></i>
+                <img src="https://ui-avatars.com/api/?name=Admin&background=random" style="width:35px; border-radius:50%; border:2px solid #ddd;" alt="Admin">
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            
+            <!-- STATS CARDS -->
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-info">
+                        <h3 id="total-users">0</h3>
+                        <p>Total Usuários</p>
+                    </div>
+                    <i class="fas fa-users stat-icon"></i>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-info">
+                        <h3 id="total-alunos">0</h3>
+                        <p>Alunos Ativos</p>
+                    </div>
+                    <i class="fas fa-running stat-icon"></i>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-info">
+                        <h3 id="total-instrutores">0</h3>
+                        <p>Instrutores</p>
+                    </div>
+                    <i class="fas fa-chalkboard-teacher stat-icon"></i>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-info">
+                        <h3>98%</h3>
+                        <p>Satisfação</p>
+                    </div>
+                    <i class="fas fa-heart stat-icon"></i>
+                </div>
+            </div>
+
+            <!-- CONTENT GRID -->
+            <div class="content-grid">
+                
+                <!-- COLUNA 1: Formulário e Logs -->
+                <div class="left-column">
+                    <!-- Formulário de Cadastro -->
+                    <div class="white-card">
+                        <div class="card-header">
+                            <span class="card-title">Novo Cadastro</span>
+                            <i class="fas fa-user-plus" style="color:#4facfe;"></i>
+                        </div>
+
+                        <div class="type-toggle">
+                            <button class="type-btn active" onclick="setFormType('aluno')" id="btn-aluno">Aluno</button>
+                            <button class="type-btn" onclick="setFormType('instrutor')" id="btn-instrutor">Instrutor</button>
+                        </div>
+
+                        <form id="cadastroForm">
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" class="form-control" id="nome" required placeholder="Ex: Ana Souza">
+                            </div>
+                            <div class="form-group">
+                                <label>E-mail</label>
+                                <input type="email" class="form-control" id="email" required placeholder="email@exemplo.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Telefone</label>
+                                <input type="tel" class="form-control" id="telefone" required placeholder="(99) 99999-9999">
+                            </div>
+
+                            <!-- Específico Aluno -->
+                            <div id="campos-aluno">
+                                <div class="form-group">
+                                    <label>Matrícula</label>
+                                    <input type="text" class="form-control" id="matricula" placeholder="Ex: 2024-001">
+                                </div>
+                                <div class="form-group">
+                                    <label>Plano</label>
+                                    <select class="form-control" id="plano">
+                                        <option value="Básico">Básico</option>
+                                        <option value="Gold">Gold</option>
+                                        <option value="Platinum">Platinum</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Específico Instrutor -->
+                            <div id="campos-instrutor" class="hidden">
+                                <div class="form-group">
+                                    <label>CREF</label>
+                                    <input type="text" class="form-control" id="cref" placeholder="Ex: 123456-G/SP">
+                                </div>
+                                <div class="form-group">
+                                    <label>Especialidade</label>
+                                    <select class="form-control" id="especialidade">
+                                        <option value="Musculação">Musculação</option>
+                                        <option value="Crossfit">Crossfit</option>
+                                        <option value="Yoga">Yoga</option>
+                                        <option value="Pilates">Pilates</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit">
+                                <i class="fas fa-check"></i> Salvar Cadastro
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Logs do Sistema -->
+                    <div class="white-card">
+                        <div class="card-header">
+                            <span class="card-title">Logs do Sistema</span>
+                            <small onclick="limparLogs()" style="cursor:pointer; color:#4facfe;">Limpar</small>
+                        </div>
+                        <div class="logs-list" id="logContainer">
+                            <!-- Logs via JS -->
+                            <div class="log-entry success">
+                                <span class="log-time">Agora</span>
+                                <span>Sistema iniciado com sucesso.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUNA 2: Lista/Tabela -->
+                <div class="right-column">
+                    <div class="white-card">
+                        <div class="card-header">
+                            <span class="card-title">Lista de Usuários</span>
+                            <div style="display:flex; gap:10px;">
+                                <button onclick="renderizarUsuarios()" style="border:none; background:transparent; cursor:pointer;"><i class="fas fa-sync-alt text-gray-500"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table id="tabela-usuarios">
+                                <thead>
+                                    <tr>
+                                        <th>Usuário</th>
+                                        <th>Tipo</th>
+                                        <th>Detalhes (Plano/CREF)</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersGrid">
+                                    <!-- Linhas via JS -->
+                                    <tr>
+                                        <td colspan="4" style="text-align:center; color:#999; padding:30px;">
+                                            Nenhum usuário cadastrado.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+<script>
+    /**
+     * ==========================================
+     * LÓGICA DE NEGÓCIO (CLASSES - MESMA LÓGICA)
+     * ==========================================
+     */
+    
+    class Usuario {
+        #nome;
+        #email;
+        #telefone;
+        #dataDeCadastro;
+
+        constructor(nome, email, telefone) {
+            this.#nome = nome;
+            this.#email = email;
+            this.#telefone = telefone;
+            this.#dataDeCadastro = new Date().toLocaleDateString('pt-BR');
+        }
+
+        get nome() { return this.#nome; }
+        get email() { return this.#email; }
+        get telefone() { return this.#telefone; }
+        get dataDeCadastro() { return this.#dataDeCadastro; }
+        get tipo() { return 'Usuario'; }
+
+        set email(novoEmail) { this.atualizarEmail(novoEmail); }
+
+        atualizarEmail(novoEmail) {
+            if (novoEmail.includes('@') && novoEmail.includes('.')) {
+                this.#email = novoEmail;
+                return { sucesso: true, msg: `[SISTEMA] Email atualizado para: ${this.#email}` };
+            } else {
+                return { sucesso: false, msg: `[ERRO] O email "${novoEmail}" é inválido.` };
+            }
+        }
+
+        fazerLogin() {
+            return { sucesso: true, msg: `[LOGIN] Bem-vindo(a), ${this.#nome}! Acesso autorizado.` };
+        }
+    }
+
+    class Aluno extends Usuario {
+        #matricula;
+        #plano;
+
+        constructor(nome, email, telefone, matricula, plano) {
+            super(nome, email, telefone);
+            this.#matricula = matricula;
+            this.#plano = plano; 
+        }
+
+        get matricula() { return this.#matricula; }
+        get plano() { return this.#plano; }
+        get tipo() { return 'Aluno'; }
+
+        atualizarPlano(novoPlano) {
+            const planosPermitidos = ['Básico', 'Gold', 'Platinum'];
+            if (planosPermitidos.includes(novoPlano)) {
+                this.#plano = novoPlano;
+                return { sucesso: true, msg: `[FINANCEIRO] Plano alterado para ${this.#plano}` };
+            } else {
+                return { sucesso: false, msg: `[ERRO] O plano "${novoPlano}" não existe.` };
+            }
+        }
+
+        realizarCheckIn() {
+            return { sucesso: true, msg: `[CATRACA] ${this.nome} liberou a catraca.` };
+        }
+
+        consultarTreino() {
+            return { sucesso: true, msg: `>> ${this.nome} está visualizando o treino (${this.#plano}).` };
+        }
+    }
+
+    class Instrutor extends Usuario {
+        #cref;
+        #especialidade;
+
+        constructor(nome, email, telefone, cref, especialidade) {
+            super(nome, email, telefone);
+            this.#cref = cref;
+            this.#especialidade = especialidade; 
+        }
+
+        get cref() { return this.#cref; }
+        get especialidade() { return this.#especialidade; }
+        get tipo() { return 'Instrutor'; }
+
+        criarFichaDeTreino(alunoNome) {
+            return { sucesso: true, msg: `[INSTRUTOR] ${this.nome} criou treino para ${alunoNome}.` };
+        }
+
+        orientarExercicio() {
+            return { sucesso: true, msg: `>> ${this.nome} orientando na área de ${this.#especialidade}.` };
+        }
+    }
+
+    /**
+     * ==========================================
+     * LÓGICA DE INTERFACE (DOM & DASHBOARD)
+     * ==========================================
+     */
+
+    // Dados Iniciais fictícios para popular o dashboard
+    const usuarios = [];
+    
+    // Referências do DOM
+    const form = document.getElementById('cadastroForm');
+    const logContainer = document.getElementById('logContainer');
+    const usersGrid = document.getElementById('usersGrid');
+    const camposAluno = document.getElementById('campos-aluno');
+    const camposInstrutor = document.getElementById('campos-instrutor');
+    const btnAluno = document.getElementById('btn-aluno');
+    const btnInstrutor = document.getElementById('btn-instrutor');
+    
+    let tipoFormularioAtual = 'aluno';
+
+    // Atualiza os contadores do topo
+    function atualizarStats() {
+        document.getElementById('total-users').innerText = usuarios.length;
+        document.getElementById('total-alunos').innerText = usuarios.filter(u => u instanceof Aluno).length;
+        document.getElementById('total-instrutores').innerText = usuarios.filter(u => u instanceof Instrutor).length;
+    }
+
+    // Função de Log estilizada
+    function addLog(resultado) {
+        const div = document.createElement('div');
+        div.className = `log-entry ${resultado.sucesso ? 'success' : 'error'}`;
+        
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'log-time';
+        timeSpan.innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        const msgSpan = document.createElement('span');
+        msgSpan.innerText = resultado.msg;
+
+        div.appendChild(timeSpan);
+        div.appendChild(msgSpan);
+        logContainer.prepend(div);
+    }
+
+    function limparLogs() {
+        logContainer.innerHTML = '';
+    }
+
+    // Alternar tipo de form
+    window.setFormType = function(type) {
+        tipoFormularioAtual = type;
+        if (type === 'aluno') {
+            camposAluno.classList.remove('hidden');
+            camposInstrutor.classList.add('hidden');
+            btnAluno.classList.add('active');
+            btnInstrutor.classList.remove('active');
+        } else {
+            camposAluno.classList.add('hidden');
+            camposInstrutor.classList.remove('hidden');
+            btnAluno.classList.remove('active');
+            btnInstrutor.classList.add('active');
+        }
+    }
+
+    // Renderizar tabela de usuários
+    window.renderizarUsuarios = function() {
+        usersGrid.innerHTML = '';
+
+        if (usuarios.length === 0) {
+            usersGrid.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#999; padding:30px;">Nenhum usuário cadastrado.</td></tr>';
+            atualizarStats();
+            return;
+        }
+
+        usuarios.forEach((user, index) => {
+            const tr = document.createElement('tr');
+            
+            // Coluna Usuário
+            const nomeInicial = user.nome.charAt(0).toUpperCase();
+            
+            // Coluna Detalhes
+            let detalheTxt = '';
+            let badgeClass = '';
+            
+            if (user instanceof Aluno) {
+                detalheTxt = `<span style="color:#666; font-size:0.8rem;">Mat: ${user.matricula}</span><br>Plano: <strong>${user.plano}</strong>`;
+                badgeClass = 'badge-aluno';
+            } else {
+                detalheTxt = `<span style="color:#666; font-size:0.8rem;">CREF: ${user.cref}</span><br>Area: <strong>${user.especialidade}</strong>`;
+                badgeClass = 'badge-instrutor';
+            }
+
+            // Coluna Ações (Ícones)
+            let botoes = '';
+            if (user instanceof Aluno) {
+                botoes = `
+                    <i class="fas fa-sign-in-alt action-icon" title="Login" onclick="acaoUsuario(${index}, 'login')"></i>
+                    <i class="fas fa-id-badge action-icon" title="Check-in" onclick="acaoUsuario(${index}, 'checkin')"></i>
+                    <i class="fas fa-file-alt action-icon" title="Ver Treino" onclick="acaoUsuario(${index}, 'treino')"></i>
+                    <i class="fas fa-exchange-alt action-icon" title="Mudar Plano" onclick="acaoUsuario(${index}, 'mudarPlano')"></i>
+                `;
+            } else {
+                botoes = `
+                    <i class="fas fa-sign-in-alt action-icon" title="Login" onclick="acaoUsuario(${index}, 'login')"></i>
+                    <i class="fas fa-chalkboard-teacher action-icon" title="Orientar" onclick="acaoUsuario(${index}, 'orientar')"></i>
+                    <i class="fas fa-plus-circle action-icon" title="Criar Treino" onclick="acaoUsuario(${index}, 'criarTreino')"></i>
+                `;
+            }
+
+            tr.innerHTML = `
+                <td>
+                    <div class="user-cell">
+                        <div class="user-avatar-small">${nomeInicial}</div>
+                        <div>
+                            <div style="font-weight:600; color:#333;">${user.nome}</div>
+                            <div style="font-size:0.75rem; color:#888;">${user.email}</div>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="badge ${badgeClass}">${user.tipo}</span></td>
+                <td>${detalheTxt}</td>
+                <td>${botoes}</td>
+            `;
+            usersGrid.appendChild(tr);
+        });
+        
+        atualizarStats();
+    }
+
+    // Ações
+    window.acaoUsuario = function(index, acao) {
+        const user = usuarios[index];
+        let resultado = { sucesso: true, msg: '' };
+
+        switch(acao) {
+            case 'login': resultado = user.fazerLogin(); break;
+            case 'checkin': if (user instanceof Aluno) resultado = user.realizarCheckIn(); break;
+            case 'treino': if (user instanceof Aluno) resultado = user.consultarTreino(); break;
+            case 'orientar': if (user instanceof Instrutor) resultado = user.orientarExercicio(); break;
+            case 'mudarPlano':
+                if (user instanceof Aluno) {
+                    const novoPlano = prompt("Novo plano (Básico, Gold, Platinum):", user.plano);
+                    if(novoPlano) {
+                        resultado = user.atualizarPlano(novoPlano);
+                        renderizarUsuarios();
+                    } else return;
+                }
+                break;
+            case 'criarTreino':
+                if (user instanceof Instrutor) {
+                    const nomeAluno = prompt("Nome do aluno:");
+                    if(nomeAluno) resultado = user.criarFichaDeTreino(nomeAluno);
+                    else return;
+                }
+                break;
+        }
+        addLog(resultado);
+    }
+
+    // Submit do Form
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nome = document.getElementById('nome').value;
+        const email = document.getElementById('email').value;
+        const telefone = document.getElementById('telefone').value;
+
+        let novoUsuario;
+        if (tipoFormularioAtual === 'aluno') {
+            const matricula = document.getElementById('matricula').value;
+            const plano = document.getElementById('plano').value;
+            novoUsuario = new Aluno(nome, email, telefone, matricula, plano);
+        } else {
+            const cref = document.getElementById('cref').value;
+            const especialidade = document.getElementById('especialidade').value;
+            novoUsuario = new Instrutor(nome, email, telefone, cref, especialidade);
+        }
+
+        usuarios.push(novoUsuario);
+        addLog({ sucesso: true, msg: `[CADASTRO] ${tipoFormularioAtual} ${nome} adicionado.` });
+        
+        renderizarUsuarios();
+        form.reset();
+        document.getElementById('plano').value = 'Básico'; // Reset select
+    });
+    
+    // Adicionar um usuário de teste inicial
+    usuarios.push(new Aluno("Carlos Demo", "carlos@teste.com", "9999-9999", "2024-001", "Gold"));
+    renderizarUsuarios();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Carro em POO</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+    }
+
+    .carro-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 50px auto;
+      width: 500px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .moto-card{
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 50px auto;
+      width: 500px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:first-of-type {
+      background-color: green;
+      color: white;
+    }
+
+    button:last-of-type {
+      background-color: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Meu Carro na Web</h1>
+
+  <div class="carro-card">
+    <h2 id="tituloCarro">Corolla!</h2>
+    <p id="detalhesCarro"></p>
+    
+    <button onclick="ligarCarro()">Ligar</button>
+    <button onclick="desligarCarro()">Desligar</button>
+    
+    <p id="statusCarro"></p>
+  
+  </div>
+  
+    <div class="moto-card">
+    <h2 id="tituloMoto">CBR1000!</h2>
+    <p id="detalhesMoto"></p>
+    
+    <button onclick="ligarMoto()">Ligar</button>
+    <button onclick="desliMoto()">Desligar</button>
+    
+    <p id="statusMoto"></p>
+  </div>
+
+  <script>
+    // Classe Carro
+    class Carro {
+      constructor(marca, modelo, ano) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.ano = ano;
+        this.ligado = false;
+      }
+
+      ligar() {
+        if (!this.ligado) {
+          this.ligado = true;
+          return "O carro foi ligado.";
+        } else {
+          return "O carro já está ligado!";
+        }
+      }
+
+      desligar() {
+        if (this.ligado) {
+          this.ligado = false;
+          return "O carro foi desligado.";
+        } else {
+          return "O carro já está desligado!";
+        }
+      }
+    }
+
+    // Criando um carro
+    const carro1 = new Carro("Toyota", "Corolla", 2025);
+
+    document.getElementById("detalhesCarro").textContent =
+      `Marca: ${carro1.marca}, Modelo: ${carro1.modelo}, Ano: ${carro1.ano}`;
+
+    function ligarCarro() {
+      document.getElementById("statusCarro").textContent = carro1.ligar();
+    }
+
+    function desligarCarro() {
+      document.getElementById("statusCarro").textContent = carro1.desligar();
+    }
+    </script>
+    <script>
+    //===moto===
+        class Moto {
+      constructor(marca, modelo, ano) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.ano = ano;
+        this.ligado = false;
+      }
+
+      ligar() {
+        if (!this.ligado) {
+          this.ligado = true;
+          return "A moto foi ligado.";
+        } else {
+          return "A moto já está ligado!";
+        }
+      }
+
+      desligar() {
+        if (this.ligado) {
+          this.ligado = false;
+          return "A moto foi desligado.";
+        } else {
+          return "A moto já está desligado!";
+        }
+      }
+    }
+
+    // Criando um carro
+    const Moto1 = new Moto("Honda", "CBR1000", 2025);
+
+    document.getElementById("detalhesMoto").textContent =
+      `Marca: ${Moto1.marca}, Modelo: ${Moto1.modelo}, Ano: ${Moto1.ano}`;
+
+    function ligarCarro() {
+      document.getElementById("statusMoto").textContent = Moto1.ligar();
+    }
+
+    function desligarCarro() {
+      document.getElementById("statusMoto").textContent = Moto1.desligar();
+    }
+    
+  </script>
+</body>
+</html>
