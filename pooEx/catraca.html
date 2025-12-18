@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Catraca - GymSystem</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* Estilos específicos para o VISOR da catraca */
+        .visor {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            color: #636e72;
+            padding: 25px;
+            font-family: 'Courier New', Courier, monospace; /* Fonte monoespaçada estilo digital */
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Estados do Visor */
+        .visor.success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .visor.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Input grande para facilitar digitação */
+        .input-catraca {
+            text-align: center; 
+            font-size: 1.5rem; 
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body class="login-body">
+
+    <div class="login-card" style="max-width: 500px;">
+        <i class="fas fa-id-card-alt" style="font-size: 3.5rem; color: #4facfe; margin-bottom: 20px;"></i>
+        
+        <h2 style="margin-bottom: 5px;">Controle de Acesso</h2>
+        <p style="color: #888; margin-bottom: 30px; font-size: 0.9rem;">Aproxime o cartão ou digite sua matrícula</p>
+
+        <div id="visor" class="visor">
+            <i class="fas fa-lock"></i> AGUARDANDO...
+        </div>
+
+        <div class="form-group">
+            <input type="text" id="inputAcesso" class="form-control input-catraca" placeholder="202401">
+        </div>
+
+        <button onclick="validar()" style="margin-top: 10px; font-size: 1.1rem;">
+            VALIDAR ACESSO
+        </button>
+
+        <div style="margin-top: 25px;">
+            <a href="index.html" style="color: #6c757d; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                <i class="fas fa-arrow-left"></i> Voltar ao Login
+            </a>
+        </div>
+    </div>
+
+    <script src="js/models.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/validar.js"></script>
+</body>
+</html>
