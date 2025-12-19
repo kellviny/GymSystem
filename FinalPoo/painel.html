@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel - GymSystem</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-dumbbell"></i> GymSystem
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active"><i class="fas fa-chart-pie"></i> Painel</li>
+            <li class="nav-item" onclick="db.logout()"><i class="fas fa-sign-out-alt"></i> Sair</li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <div>
+                <h2 id="tituloPainel">Carregando...</h2>
+                <span id="badgeUser" style="padding: 5px 10px; border-radius: 5px; color: white; font-size: 0.8em;">...</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-weight:bold" id="nomeUser">Usuário</span>
+                <div style="width:40px; height:40px; background:#ddd; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <div id="viewAdmin" class="hidden">
+            <div class="white-card">
+                <h3><i class="fas fa-user-plus"></i> Cadastrar Novo Usuário</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <select id="novoTipo">
+                            <option value="aluno">Aluno</option>
+                            <option value="instrutor">Instrutor</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Nome</label><input type="text" id="novoNome" class="form-control"></div>
+                    <div class="form-group"><label>E-mail</label><input type="email" id="novoEmail" class="form-control"></div>
+                    <div class="form-group"><label>Senha</label><input type="password" id="novoSenha" class="form-control"></div>
+                    <div class="form-group" style="grid-column: span 2;"><label>Matrícula/CREF</label><input type="text" id="novoExtra" class="form-control"></div>
+                </div>
+                <button onclick="app.cadastrarUsuario()" style="width: auto; margin-top: 10px;">Salvar</button>
+            </div>
+
+            <div class="white-card" style="border-top: 5px solid #2b3648; margin-top: 20px;">
+                <h3><i class="fas fa-users"></i> Usuários Cadastrados</h3>
+                <div id="listaUsuariosAdm" class="event-list" style="display: block;">
+                    </div>
+            </div>
+
+        </div>
+
+        <div id="viewInstrutor" class="hidden">
+            <div class="white-card" style="border-top: 5px solid #f39c12;">
+                <h3><i class="fas fa-edit"></i> Prescrever Treino</h3>
+                <div class="form-group">
+                    <label>Selecione o Aluno:</label>
+                    <select id="selectAlunos"></select>
+                </div>
+                <div class="form-group">
+                    <textarea id="descTreino" class="form-control" rows="5" placeholder="Descrição do treino..."></textarea>
+                </div>
+                <button onclick="app.criarTreino()">Enviar Treino</button>
+            </div>
+
+            <div class="white-card" style="border-top: 5px solid #e67e22;">
+                <h3><i class="fas fa-calculator"></i> Calculadora de IMC</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group"><label>Peso (kg)</label><input type="number" id="pesoIMC" class="form-control" step="0.1"></div>
+                    <div class="form-group"><label>Altura (m)</label><input type="number" id="alturaIMC" class="form-control" step="0.01"></div>
+                </div>
+                <button onclick="app.calcularIMC()" style="background: #e67e22;">Calcular</button>
+                <div id="resultadoIMC" style="margin-top: 15px; text-align: center; display: none;">
+                    <strong>IMC: <span id="valorIMC"></span> - <span id="classificacaoIMC"></span></strong>
+                </div>
+            </div>
+        </div>
+
+        <div id="viewAluno" class="hidden">
+            <div class="white-card" style="border-top: 5px solid #2ecc71;">
+                <h3><i class="fas fa-running"></i> Meus Treinos</h3>
+                <div id="listaTreinos"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/models.js"></script>
+    <script src="js/banco.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
